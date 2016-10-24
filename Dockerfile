@@ -39,6 +39,8 @@ RUN ./tools/install-fsharp.sh
 
 RUN cd /app
 
+CMD  ["npm", "install"]
+CMD  ["npm", "run", "install-gsl"]
+
 # Start the GSL service
-CMD  ["npm" "install"]
 CMD  ["npm" , "run", "start"]
