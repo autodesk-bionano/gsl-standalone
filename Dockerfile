@@ -20,7 +20,6 @@ RUN apt-get install -y python python-dev python-pip git build-essential wget && 
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 
-
 EXPOSE 9876
 ENV PORT=9876
 
@@ -39,8 +38,7 @@ RUN ./tools/install-fsharp.sh
 
 RUN cd /app
 
-CMD  ["npm", "install"]
-CMD  ["npm", "run", "install-gsl"]
+RUN npm install
 
 # Start the GSL service
 CMD  ["npm" , "run", "start"]
