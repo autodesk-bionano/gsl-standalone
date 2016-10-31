@@ -76,8 +76,8 @@ router.post('/gslc', jsonParser, (req, res, next) => {
       const projectFileDir = createProjectFilesDirectoryPath(input.projectId, input.extension);
       const filePath = createProjectFilePath(input.projectId, input.extension, argConfig.gslFile.fileName);
       if (!fs.existsSync(projectFileDir)) {
-        mkdirp.sync(projectFileDir, function (err) {
-        if (err) console.error(err)
+        mkdirp.sync(projectFileDir, function(err) {
+          if (err) console.error(err);
           else console.log('Created dir: ' + projectFileDir);
         });
       }
@@ -202,7 +202,7 @@ router.get('/download*', (req, res, next) => {
       if (exists) {
         res.header('Content-Type', argConfig.downloadableFileTypes[req.query.type].contentType);
         res.attachment(fileName);
-        var readStream = fs.createReadStream(filePath);
+        const readStream = fs.createReadStream(filePath);
         readStream.pipe(res);
       } else {
         // call the remote server to check if files exist there.
@@ -220,14 +220,12 @@ router.get('/download*', (req, res, next) => {
  * Route to list the available file downloads.
  */
 router.post('/listDownloads', jsonParser, (req, res, next) => {
-
   const input = req.body;
   const fileStatus = {};
   const projectFileDir = createProjectFilesDirectoryPath(input.projectId, input.extension);
   Object.keys(argConfig.downloadableFileTypes).forEach((key) => {
     const filePath = projectFileDir + '/' + argConfig.downloadableFileTypes[key].fileName;
     try {
-      console.log(filePath);
       fs.accessSync(filePath);
       fileStatus[key] = true;
     } catch (err) {

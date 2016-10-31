@@ -1,7 +1,3 @@
-const path = require('path');
-const webpack = require('webpack');
-const extensionConfig = require('./package.json');
-
 const serverModules = {
   loaders: [
     {
@@ -10,9 +6,9 @@ const serverModules = {
       loader: 'babel-loader',
       query: {
           // https://github.com/babel/babel-loader#options
-          presets: ['stage-2', 'es2015'],
-          plugins: ['transform-class-properties', 'transform-decorators-legacy', 'add-module-exports', 'transform-runtime'],
-        },
+        presets: ['stage-2', 'es2015'],
+        plugins: ['transform-class-properties', 'transform-decorators-legacy', 'add-module-exports', 'transform-runtime'],
+      },
     },
     {
       test: /\.json/,
