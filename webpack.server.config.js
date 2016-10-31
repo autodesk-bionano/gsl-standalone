@@ -38,11 +38,6 @@ const debug = {
   },
   devtool: 'inline-source-map',
   module: serverModules,
-  //plugins: [
-  //  new webpack.DefinePlugin({
-  //    'process.env.EXTENSION_DEPLOY_DIR': JSON.stringify(path.join('extensions', 'node_modules', extensionConfig.name)),
-  //  }),
-  //],
 };
 
 // ===========================================================================
@@ -59,11 +54,6 @@ const release = {
     libraryTarget: 'commonjs2',
   },
   module: serverModules,
-  //plugins: [
-  //  new webpack.DefinePlugin({
-  //    'process.env.EXTENSION_DEPLOY_DIR': JSON.stringify(path.join('extensions', 'node_modules', extensionConfig.name)),
-  //  }),
-  //],
 };
 
 // ===========================================================================
@@ -82,11 +72,6 @@ const dev = {
   },
   module: serverModules,
   devtool: 'inline-source-map',
-  //plugins: [
-  //  new webpack.DefinePlugin({
-  //    'process.env.EXTENSION_DEPLOY_DIR': JSON.stringify(path.join('extensions', 'node_modules', extensionConfig.name)),
-  //  }),
-  // ],
 };
 
 // get target from npm command used to start the build

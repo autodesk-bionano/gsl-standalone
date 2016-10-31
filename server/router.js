@@ -78,9 +78,8 @@ router.post('/gslc', jsonParser, (req, res, next) => {
       if (!fs.existsSync(projectFileDir)) {
         mkdirp.sync(projectFileDir, function (err) {
         if (err) console.error(err)
-          else console.log('dir created')
+          else console.log('Created dir: ' + projectFileDir);
         });
-        //fs.mkdirSync(projectFileDir);
       }
 
       let output = '';
@@ -188,6 +187,55 @@ router.post('/gslc', jsonParser, (req, res, next) => {
       });
     }
   });
+});
+
+/**
+ * Route for downloading any file type.
+ * (Should be specified in 'downloadableFileTypes' in config.js)
+ */
+router.get('/download*', (req, res, next) => {
+  if (argConfig.downloadableFileTypes.hasOwnProperty(req.query.type)) {
+    const fileName = argConfig.downloadableFileTypes[req.query.type].fileName;
+    const filePath = createProjectFilePath(req.query.projectId, req.query.extension, fileName);
+    console.log(filePath);
+    fs.exists(filePath, (exists) => {
+      if (exists) {
+        res.header('Content-Type', argConfig.downloadableFileTypes[req.query.type].contentType);
+        res.attachment(fileName);
+        var readStream = fs.createReadStream(filePath);
+        readStream.pipe(res);
+      } else {
+        // call the remote server to check if files exist there.
+        res.send(`No file of type ${req.query.type} generated yet`);
+        res.status(404);
+      }
+    });
+  } else {
+    res.send('Could not find an appropriate file type to download.');
+    res.status(501);
+  }
+});
+
+/**
+ * Route to list the available file downloads.
+ */
+router.post('/listDownloads', jsonParser, (req, res, next) => {
+
+  const input = req.body;
+  const fileStatus = {};
+  const projectFileDir = createProjectFilesDirectoryPath(input.projectId, input.extension);
+  Object.keys(argConfig.downloadableFileTypes).forEach((key) => {
+    const filePath = projectFileDir + '/' + argConfig.downloadableFileTypes[key].fileName;
+    try {
+      console.log(filePath);
+      fs.accessSync(filePath);
+      fileStatus[key] = true;
+    } catch (err) {
+      fileStatus[key] = false;
+    }
+  });
+  console.log(fileStatus);
+  res.status(200).json(fileStatus);
 });
 
 module.exports = router;
