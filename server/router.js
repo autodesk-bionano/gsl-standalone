@@ -43,8 +43,8 @@ router.post('/gslc', jsonParser, (req, res, next) => {
   commandExists('mono', (err, commandExists) => {
     if (err || !commandExists) {
       const monoErrorMessage = 'ERROR: Could not find a valid mono installation on the server to run GSL. \n' +
-      'Please refer to https://github.com/autodesk-bionano/genome-designer/blob/master/extensions/gslEditor/README.md for server installation instructions. \n' +
-      'Alternatively, you could run `npm run install-fsharp` from extensions/gslEditor';
+      'Please refer to https://github.com/rupalkhilari/gc-gsl-editor/blob/master/README.md for server installation instructions. \n' +
+      'Alternatively, you could run `npm run install-fsharp` from gsl-standalone/';
       const result = {
         'result': monoErrorMessage,
         'contents': [],
@@ -54,8 +54,8 @@ router.post('/gslc', jsonParser, (req, res, next) => {
       res.status(501).json(result); // Service not implemented
     } else if (!gslDir || !gslBinary || !fs.existsSync(gslDir) || !fs.existsSync(gslBinary)) {
       const errorMessage = 'ERROR: Failed to execute GSL code. \nThe server ' +
-      'has not been configured for GSL. \nPlease refer to https://github.com/autodesk-bionano/genome-designer/blob/master/extensions/gslEditor/README.md for ' +
-      'server installation instructions. \nAlternatively, you could run `npm run install-fsharp` from extensions/gslEditor';
+      'has not been configured for GSL. \nPlease refer to https://github.com/rupalkhilari/gc-gsl-editor/blob/master/README.md for ' +
+      'server installation instructions. \nAlternatively, you could run `npm run install-fsharp` from gsl-standalone';
 
       console.log(errorMessage);
       console.log(`gslDir: ${gslDir} and gslBinary: ${gslBinary}`);
@@ -232,7 +232,6 @@ router.post('/listDownloads', jsonParser, (req, res, next) => {
       fileStatus[key] = false;
     }
   });
-  console.log(fileStatus);
   res.status(200).json(fileStatus);
 });
 
