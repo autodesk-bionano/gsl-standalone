@@ -32,10 +32,8 @@ ADD ./tools/install-fsharp.sh /app/tools/install-fsharp.sh
 RUN ./tools/install-fsharp.sh
 
 #setup node
-ADD package.json /app/package.json
-RUN npm install
-
 ADD . /app
+RUN npm install
 
 # Start the GSL service
 CMD  ["npm" , "run", "start"]
