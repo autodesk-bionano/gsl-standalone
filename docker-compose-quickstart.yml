@@ -1,0 +1,7 @@
+app:
+  extends:
+    file: docker-compose.yml
+    service: app
+  image: quay.io/autodesk_bionano/gctorgsl_app${BNR_ENV_TAG}
+  log_driver: json-file
+  restart: always

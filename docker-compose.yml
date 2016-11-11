@@ -1,0 +1,8 @@
+app:
+  build: .
+  command:
+    npm run start
+  ports:
+    - "9876:9876"
+  environment:
+    PORT: 9876
