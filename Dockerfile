@@ -19,7 +19,6 @@ RUN apt-get install -y python python-dev python-pip git build-essential wget && 
     sudo apt-get -y install nodejs && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN npm update -g npm
 
 EXPOSE 9876
 ENV PORT=9876
@@ -27,12 +26,18 @@ ENV PORT=9876
 RUN mkdir /app
 WORKDIR /app
 
+#setup node
+ADD package.json /app/package.json
+RUN npm update -g npm && npm install
+
+ADD . /app
+
 #install fsharp (needed by gslEditor extension if it exists)
-ADD ./tools/install-fsharp.sh /app/tools/install-fsharp.sh
+#RUN if [ -d ./tools/gslEditor/ ]; then ./extensions/gslEditor/tools/install-fsharp.sh ; fi
 RUN ./tools/install-fsharp.sh
 
-#setup node
-ADD . /app
+RUN cd /app
+
 RUN npm install
 
 # Start the GSL service
