@@ -236,7 +236,7 @@ router.post('/listDownloads', jsonParser, (req, res, next) => {
 });
 
 /**
- * Route to list the available file downloads.
+ * Route to check if GSL, mono, VERSION file exist, and return the VERSION if they do.
  */
 router.get('/version', (req, res) => {
   commandExists('mono', (err, commandExists) => {
