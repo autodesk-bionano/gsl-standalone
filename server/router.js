@@ -235,4 +235,33 @@ router.post('/listDownloads', jsonParser, (req, res, next) => {
   res.status(200).json(fileStatus);
 });
 
+/**
+ * Route to list the available file downloads.
+ */
+router.get('/version', (req, res) => {
+  commandExists('mono', (err, commandExists) => {
+    var message = '';
+    // Check for mono
+    if (err || !commandExists) {
+      message += 'Could not find mono <br>';
+    }
+    // Check for GSL directory.
+    if (!fs.existsSync(gslDir)) {
+      message += 'Could not find GSL directory at ' + gslDir + '<br>';
+    }
+    if (message !== '') {
+      res.send(message);
+    }
+    else {
+      try { 
+        //this is only relevant when the server builds, so can assume always at same path relative to __dirname
+        const version = fs.readFileSync(path.join(__dirname, '../VERSION'));
+        res.send(version);
+      } catch (ignored) {
+        res.send('Missing VERSION file');
+      }
+    }
+  });
+});
+
 module.exports = router;
