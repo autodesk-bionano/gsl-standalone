@@ -26,19 +26,18 @@ ENV PORT=9876
 RUN mkdir /app
 WORKDIR /app
 
+#install fsharp (needed by gslEditor extension if it exists)
+#RUN if [ -d ./tools/gslEditor/ ]; then ./extensions/gslEditor/tools/install-fsharp.sh ; fi
+ADD ./tools/install-fsharp.sh /app/tools/install-fsharp.sh
+RUN ./tools/install-fsharp.sh
+
 #setup node
 ADD package.json /app/package.json
 RUN npm update -g npm && npm install
 
 ADD . /app
-
-#install fsharp (needed by gslEditor extension if it exists)
-#RUN if [ -d ./tools/gslEditor/ ]; then ./extensions/gslEditor/tools/install-fsharp.sh ; fi
-RUN ./tools/install-fsharp.sh
-
-RUN cd /app
-
 RUN npm install
+RUN npm run postinstall
 
 # Start the GSL service
 CMD  ["npm" , "run", "start"]

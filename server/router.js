@@ -250,15 +250,27 @@ router.get('/version', (req, res) => {
       message += 'Could not find GSL directory at ' + gslDir + '<br>';
     }
     if (message !== '') {
+      res.status(500);
       res.send(message);
+      res.end();
     }
     else {
       try { 
         //this is only relevant when the server builds, so can assume always at same path relative to __dirname
-        const version = fs.readFileSync(path.join(__dirname, '../VERSION'));
+        let version = fs.readFileSync(path.join(__dirname, '../VERSION'), {
+          encoding: 'utf8',
+        });
+        if (version && (version != '')) {
+          version = version.replace(/\n/g, '');
+        }
+        res.status(200);
+        res.set('Content-Type', 'text/plain');
         res.send(version);
+        res.end();
       } catch (ignored) {
+        res.status(404);
         res.send('Missing VERSION file');
+        res.end();
       }
     }
   });
