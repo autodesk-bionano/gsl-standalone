@@ -11,10 +11,12 @@ export const argConfig = {
     '--ape': {
       'arguments': [ '<outDir>', '<prefix>' ],
       'fileName': 'gslOut',
+      'fileExt': '.ape',
     },
     '--cm': {
       'arguments': [ '<outDir>', '<prefix>'],
       'fileName': 'gslOut',
+      'fileExt': '.cx5',
     },
     '--primers': {
       'arguments': ['<filePath>'],
@@ -76,7 +78,7 @@ export const argConfig = {
     'allFormats': {
       'fileName': 'gslProjectFiles.zip',
       'contentType': 'application/zip',
-      'contentExt': 'project.gsl|thumperOut|gslOut.json|.xls|.txt|.ape|.cx5',
+      'contentExt': 'rabits.txt|stitches.txt|.xls|Flat.txt|.ape',
     },
   },
 };

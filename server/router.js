@@ -8,7 +8,7 @@ import mkdirp from 'mkdirp';
 
 import { createProjectFilePath, createProjectFilesDirectoryPath } from './utils/project';
 import { preprocessArgs, makeArgumentString, getJsonOutFile } from './utils/command';
-import { makeZip } from './utils/fileSystem';
+import { makeZip, filesCopy } from './utils/fileSystem';
 import { argConfig } from './config';
 
 // Path to the GSL repository
@@ -82,6 +82,14 @@ router.post('/gslc', jsonParser, (req, res, next) => {
         });
       }
 
+      const auxDir = path.join(projectFileDir, 'auxiliary');
+      if (!fs.existsSync(auxDir)) {
+        mkdirp.sync(auxDir, function(err) {
+          if (err) console.error(err);
+          else console.log('Created dir: ' + auxDir);
+        });
+      }
+
       let output = '';
       // write out a file with the code.
       fs.writeFile(filePath, content, (err) => {
@@ -142,7 +150,11 @@ router.post('/gslc', jsonParser, (req, res, next) => {
               if (modifiedArgs.hasOwnProperty('--cm')) {
                 makeZip(projectFileDir,
                   argConfig.downloadableFileTypes.cm.contentExt,
-                  argConfig.downloadableFileTypes.cm.fileName);
+                  argConfig.downloadableFileTypes.cm.fileName)
+                .then(() => {
+                  // Copy the generated file into auxiliary along with the other files
+                  filesCopy(projectFileDir, argConfig.fileArguments['--cm'].fileExt, auxDir);
+                });
               }
 
               if (modifiedArgs.hasOwnProperty('--ape')) {
@@ -150,10 +162,6 @@ router.post('/gslc', jsonParser, (req, res, next) => {
                   argConfig.downloadableFileTypes.ape.contentExt,
                   argConfig.downloadableFileTypes.ape.fileName);
               }
-
-              makeZip(projectFileDir,
-                argConfig.downloadableFileTypes.allFormats.contentExt,
-                argConfig.downloadableFileTypes.allFormats.fileName);
 
               if (modifiedArgs.hasOwnProperty('--thumper')) {
                 makeZip(projectFileDir,
@@ -169,11 +177,24 @@ router.post('/gslc', jsonParser, (req, res, next) => {
                     } catch (ex) {
                       console.log(`Failed to read ${inputFile} and write to ${outputFile}.`, ex);
                     }
+
+                    // Copy the other files to aux directory
+                    filesCopy(projectFileDir, 'mega.txt|name2id.txt', auxDir);
                   })
                   .catch((ex) => {
                     console.log('An error occured while writing the .xls file', ex);
                   });
               }
+
+              filesCopy(projectFileDir, 'project.run.gsl|.xml|gslOut.json', auxDir)
+              .then(() => {
+                makeZip(projectFileDir,
+                  argConfig.downloadableFileTypes.allFormats.contentExt,
+                  argConfig.downloadableFileTypes.allFormats.fileName);
+              })
+              .catch((ex) => {
+                console.log('An error occured while writing all formats', ex);
+              });
             } else {
               const result = {
                 'result': output,
