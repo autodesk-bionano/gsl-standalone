@@ -177,7 +177,6 @@ export const filesCopy = (sourcePath, contentExt, target) => {
       });
     })
     .then(() => {
-      console.log('Copied files to ' + target);
       resolve();
     })
     .catch((err) => {
