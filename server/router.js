@@ -8,7 +8,7 @@ import mkdirp from 'mkdirp';
 
 import { createProjectFilePath, createProjectFilesDirectoryPath } from './utils/project';
 import { preprocessArgs, makeArgumentString, getJsonOutFile } from './utils/command';
-import { makeZip, filesCopy } from './utils/fileSystem';
+import { makeZip, makeZip2, filesCopy, fileWrite } from './utils/fileSystem';
 import { argConfig } from './config';
 
 // Path to the GSL repository
@@ -82,14 +82,6 @@ router.post('/gslc', jsonParser, (req, res, next) => {
         });
       }
 
-      const auxDir = path.join(projectFileDir, 'auxiliary');
-      if (!fs.existsSync(auxDir)) {
-        mkdirp.sync(auxDir, function(err) {
-          if (err) console.error(err);
-          else console.log('Created dir: ' + auxDir);
-        });
-      }
-
       let output = '';
       // write out a file with the code.
       fs.writeFile(filePath, content, (err) => {
@@ -146,55 +138,7 @@ router.post('/gslc', jsonParser, (req, res, next) => {
                 res.status(200).json(result);
               });
 
-              // Create zip packages.
-              if (modifiedArgs.hasOwnProperty('--cm')) {
-                makeZip(projectFileDir,
-                  argConfig.downloadableFileTypes.cm.contentExt,
-                  argConfig.downloadableFileTypes.cm.fileName)
-                .then(() => {
-                  // Copy the generated file into auxiliary along with the other files
-                  filesCopy(projectFileDir, argConfig.fileArguments['--cm'].fileExt, auxDir);
-                });
-              }
-
-              if (modifiedArgs.hasOwnProperty('--ape')) {
-                makeZip(projectFileDir,
-                  argConfig.downloadableFileTypes.ape.contentExt,
-                  argConfig.downloadableFileTypes.ape.fileName);
-              }
-
-              if (modifiedArgs.hasOwnProperty('--thumper')) {
-                makeZip(projectFileDir,
-                  argConfig.downloadableFileTypes.thumper.contentExt,
-                  argConfig.downloadableFileTypes.thumper.fileName)
-                  .then(() => {
-                    // create the rabit spreadsheet.
-                    const inputFile = projectFileDir + '/' + argConfig.fileArguments['--thumper'].fileName + '.rabits.txt';
-                    const outputFile = projectFileDir + '/' + argConfig.fileArguments['--thumper'].fileName + '.rabits.xls';
-                    console.log(`Copying ${inputFile} to ${outputFile}`);
-                    try {
-                      fs.createReadStream(inputFile).pipe(fs.createWriteStream(outputFile));
-                    } catch (ex) {
-                      console.log(`Failed to read ${inputFile} and write to ${outputFile}.`, ex);
-                    }
-
-                    // Copy the other files to aux directory
-                    filesCopy(projectFileDir, 'mega.txt|name2id.txt', auxDir);
-                  })
-                  .catch((ex) => {
-                    console.log('An error occured while writing the .xls file', ex);
-                  });
-              }
-
-              filesCopy(projectFileDir, 'project.run.gsl|.xml|gslOut.json', auxDir)
-              .then(() => {
-                makeZip(projectFileDir,
-                  argConfig.downloadableFileTypes.allFormats.contentExt,
-                  argConfig.downloadableFileTypes.allFormats.fileName);
-              })
-              .catch((ex) => {
-                console.log('An error occured while writing all formats', ex);
-              });
+              makePackages(projectFileDir, modifiedArgs);
             } else {
               const result = {
                 'result': output,
@@ -210,6 +154,60 @@ router.post('/gslc', jsonParser, (req, res, next) => {
   });
 });
 
+
+const makePackages = (projectFileDir, modifiedArgs) => {
+
+  // We need to add file not important for assembly in the auxiliary directory.
+  const auxDir = path.join(projectFileDir, 'auxiliary');
+  if (!fs.existsSync(auxDir)) {
+    mkdirp.sync(auxDir, function(err) {
+      if (err) console.error(err);
+      else console.log('Created dir: ' + auxDir);
+    });
+  }
+
+  // Create zip packages.
+  Promise.resolve()
+  .then(() => {
+    if (modifiedArgs.hasOwnProperty('--cm')) {
+      makeZip(projectFileDir,
+        argConfig.downloadableFileTypes.cm.contentExt,
+        argConfig.downloadableFileTypes.cm.fileName)
+      .then(() => {
+        // Copy the generated file into auxiliary along with the other files
+        filesCopy(projectFileDir, argConfig.fileArguments['--cm'].fileExt, auxDir);
+      });
+    }
+    if (modifiedArgs.hasOwnProperty('--ape')) {
+      makeZip(projectFileDir,
+        argConfig.downloadableFileTypes.ape.contentExt,
+        argConfig.downloadableFileTypes.ape.fileName);
+    }
+    if (modifiedArgs.hasOwnProperty('--thumper')) {
+      // create the rabit spreadsheet.
+      const inputFile = projectFileDir + '/' + argConfig.fileArguments['--thumper'].fileName + '.rabits.txt';
+      const outputFile = projectFileDir + '/' + argConfig.fileArguments['--thumper'].fileName + '.rabits.xls';
+      console.log(`Copying ${inputFile} to ${outputFile}`);
+      try {
+        fs.createReadStream(inputFile).pipe(fs.createWriteStream(outputFile));
+      } catch (ex) {
+        console.log(`Failed to read ${inputFile} and write to ${outputFile}.`, ex);
+      }
+      filesCopy(projectFileDir, 'mega.txt|name2id.txt', auxDir);
+    }
+  })
+  .then(() => {
+    filesCopy(projectFileDir, 'project.gsl|.xml|gslOut.json', auxDir)
+    .then(() => {
+    makeZip(projectFileDir,
+      argConfig.downloadableFileTypes.allFormats.contentExt,
+      argConfig.downloadableFileTypes.allFormats.fileName);
+    })
+  })
+  .catch((ex) => {
+    console.log('An error occured while writing all formats', ex);
+  });
+}
 /**
  * Route for downloading any file type.
  * (Should be specified in 'downloadableFileTypes' in config.js)
@@ -282,6 +280,29 @@ router.get('/version', (req, res) => {
         res.send('Missing VERSION file');
       }
     }
+  });
+});
+
+/**
+ * Route for running GSL programs on the server
+ */
+router.post('/writeRemote', jsonParser, (req, res, next) => {
+  const input = req.body;
+  const filePath = createProjectFilePath(input.projectId, input.extension, input.fileName);
+  fileWrite(filePath, input.contents)
+  .then(() => {
+    const result = {
+      'result': 'Saved.',
+      'status': 1,
+    };
+    res.status(200).json(result);
+  })
+  .catch((err) => {
+    const result = {
+      'result': 'Error occured: ' + err,
+      'status': -1,
+    };
+    res.status(500).json(result);
   });
 });
 
