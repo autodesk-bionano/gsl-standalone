@@ -1,6 +1,6 @@
 /**
  * Helper functions to determine the project-related data paths.
- * Taken from server/utils/filePaths.js
+ * From https://github.com/Autodesk/genetic-constructor/blob/master/server/utils/filePaths.js
  */
 
 import invariant from 'invariant';

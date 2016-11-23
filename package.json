@@ -15,10 +15,19 @@
     "install-gsl": "./node_modules/.bin/babel-node tools/run install-gsl",
     "postinstall": "npm run install-gsl"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:autodesk-bionano/gsl-standalone.git"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/autodesk-bionano/gsl-standalone/issues"
+  },
   "dependencies": {
     "body-parser": "^1.15.2",
     "command-exists": "^1.0.2",
     "fs": "0.0.1-security",
+    "glob-promise": "^2.0.0",
     "invariant": "^2.2.1",
     "jszip": "^3.1.1",
     "lodash.throttle": "^4.1.0",
