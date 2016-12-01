@@ -45,6 +45,7 @@ jspm_packages
 
 # Repo-specific
 GSL/
+Gslc/
 storage/
 .idea/
 VERSION

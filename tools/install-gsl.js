@@ -15,7 +15,7 @@ import { promisedExec } from './processUtils';
 import fs from 'fs';
 import rimraf from 'rimraf';
 
-const repo = 'https://github.com/rupalkhilari/GSL-build.git';
+const repo = 'https://github.com/autodesk-bionano/GSL-build.git';
 const branch = 'new_genomes_build';
 
 async function installGSL() {
@@ -36,7 +36,7 @@ async function installGSL() {
       await promisedExec('git checkout ' + branch, {}, { forceOutput: true});
     }
   } catch (err) {
-    console.log('CAUGHT', err);
+    console.log('Error:', err);
     throw err;
   }
 }
