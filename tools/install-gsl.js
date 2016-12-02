@@ -36,7 +36,7 @@ async function installGSL() {
       await promisedExec('git checkout ' + branch, {}, { forceOutput: true});
     }
   } catch (err) {
-    console.log('CAUGHT', err);
+    console.log('Error:', err);
     throw err;
   }
 }
