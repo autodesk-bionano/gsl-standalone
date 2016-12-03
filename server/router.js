@@ -12,10 +12,10 @@ import { makeZip, makeZip2, filesCopy, fileWrite } from './utils/fileSystem';
 import { argConfig } from './config';
 
 // Path to the GSL repository
-const repoName = 'Gslc';
+const repoName = 'GSL';
 const gslDir = path.resolve(path.join(__dirname, '..', process.env.EXTENSION_DEPLOY_DIR ? process.env.EXTENSION_DEPLOY_DIR : '', repoName));
-const gslBinary = path.resolve(gslDir, 'bin/Gslc/Gslc.exe');
-const libArg = `--lib ${gslDir}/gslc_lib`;
+const gslBinary = path.resolve(gslDir, 'bin/gslc/gslc.exe');
+const libArg =  `--lib ${gslDir}/data/lib`;
 
 const router = express.Router();
 const jsonParser = bodyParser.json({
