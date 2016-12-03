@@ -78,7 +78,7 @@ export const argConfig = {
     'allFormats': {
       'fileName': 'gslProjectFiles.zip',
       'contentType': 'application/zip',
-      'contentExt': ['auxiliary/*', '*rabits.txt', '*stitches.txt', '*.xls', '*Flat.txt', '*.ape'],
+      'contentExt': ['auxiliary/*', '*rabits.txt', '*stitches.txt', '*.xls', '*Flat.txt', '*.ape', '*primers.txt'],
     },
   },
 };
