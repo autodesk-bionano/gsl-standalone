@@ -8,13 +8,15 @@ Standalone GSL server for the Genetic Constructor GSL extension.
 
  ```npm install```
 
-* If you are running an instance of the server locally, you also need to install fsharp and mono by running the following command from the extension's root directory (```gsl-standalone/```). 
+* If you are running an instance of the server locally, you also need to install fsharp and mono by running the following command from the server's root directory (```gsl-standalone/```). 
 
  ```npm run install-fsharp```
 
 Alternatively, you could manually install these by following the instructions given for [Mac](http://fsharp.org/use/mac/), [Linux](http://fsharp.org/use/linux/) or [Windows](http://www.mono-project.com/download/#download-win).
 
-* As a part of the postinstall stage of the GSL extension, a [pre-built fork of the GSL repository](https://github.com/autodesk-bionano/Gslc) will be cloned and used by the extension's server to run GSL code. The development fork of the Gslc repository can be found [here](https://github.com/autodesk-bionano/Gslc).
+* As a part of the postinstall stage of the GSL extension, a [pre-built fork of the GSL repository](https://github.com/autodesk-bionano/Gslc) will be cloned and used by the extension's server to run GSL code. The development fork of the Gslc repository can be found [here](https://github.com/autodesk-bionano/Gslc). You could also install it manually by running the following command from the server's root directory (```gsl-standalone/```). 
+
+ ```npm run install-gsl```
 
 * You could also run it from within a docker container using the given Dockerfile.
 
