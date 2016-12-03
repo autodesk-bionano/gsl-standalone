@@ -12,10 +12,10 @@ import { makeZip, makeZip2, filesCopy, fileWrite } from './utils/fileSystem';
 import { argConfig } from './config';
 
 // Path to the GSL repository
-const repoName = 'GSL';
+const repoName = 'Gslc';
 const gslDir = path.resolve(path.join(__dirname, '..', process.env.EXTENSION_DEPLOY_DIR ? process.env.EXTENSION_DEPLOY_DIR : '', repoName));
-const gslBinary = path.resolve(gslDir, 'bin/gslc/gslc.exe');
-const libArg = `--lib ${gslDir}/data/lib`;
+const gslBinary = path.resolve(gslDir, 'bin/Gslc/Gslc.exe');
+const libArg = `--lib ${gslDir}/gslc_lib`;
 
 const router = express.Router();
 const jsonParser = bodyParser.json({
@@ -43,7 +43,7 @@ router.post('/gslc', jsonParser, (req, res, next) => {
   commandExists('mono', (err, commandExists) => {
     if (err || !commandExists) {
       const monoErrorMessage = 'ERROR: Could not find a valid mono installation on the server to run GSL. \n' +
-      'Please refer to https://github.com/rupalkhilari/gc-gsl-editor/blob/master/README.md for server installation instructions. \n' +
+      'Please refer to https://github.com/autodesk-bionano/gc-gsl-editor/blob/master/README.md for server installation instructions. \n' +
       'Alternatively, you could run `npm run install-fsharp` from gsl-standalone/';
       const result = {
         'result': monoErrorMessage,
@@ -54,8 +54,8 @@ router.post('/gslc', jsonParser, (req, res, next) => {
       res.status(501).json(result); // Service not implemented
     } else if (!gslDir || !gslBinary || !fs.existsSync(gslDir) || !fs.existsSync(gslBinary)) {
       const errorMessage = 'ERROR: Failed to execute GSL code. \nThe server ' +
-      'has not been configured for GSL. \nPlease refer to https://github.com/rupalkhilari/gc-gsl-editor/blob/master/README.md for ' +
-      'server installation instructions. \nAlternatively, you could run `npm run install-fsharp` from gsl-standalone';
+      'has not been configured for GSL. \nPlease refer to https://github.com/autodesk-bionano/gc-gsl-editor/blob/master/README.md for ' +
+      'server installation instructions. \nAlternatively, you could run `npm run install-gsl` from gsl-standalone';
 
       console.log(errorMessage);
       console.log(`gslDir: ${gslDir} and gslBinary: ${gslBinary}`);
@@ -154,7 +154,9 @@ router.post('/gslc', jsonParser, (req, res, next) => {
   });
 });
 
-
+/**
+ * Helper function to create the zip packages from the output files.
+ */
 const makePackages = (projectFileDir, modifiedArgs) => {
 
   // We need to add file not important for assembly in the auxiliary directory.
@@ -208,6 +210,7 @@ const makePackages = (projectFileDir, modifiedArgs) => {
     console.log('An error occured while writing all formats', ex);
   });
 }
+
 /**
  * Route for downloading any file type.
  * (Should be specified in 'downloadableFileTypes' in config.js)
