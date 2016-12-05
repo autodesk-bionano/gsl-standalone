@@ -15,24 +15,25 @@ import { promisedExec } from './processUtils';
 import fs from 'fs';
 import rimraf from 'rimraf';
 
-const repo = 'https://github.com/autodesk-bionano/GSL-build.git';
-const branch = 'new_genomes_build';
+const repo = 'https://github.com/autodesk-bionano/Gslc.git';
+const branch = 'master-build';
+const repoName = 'Gslc';
 
 async function installGSL() {
   try {
-    if (!fs.existsSync('GSL')) {
-      await promisedExec('git clone ' + repo + ' GSL', {}, { forceOutput: true});
-      process.chdir('GSL');
+    if (!fs.existsSync(repoName)) {
+      await promisedExec('git clone ' + repo + ' ' + repoName, {}, { forceOutput: true});
+      process.chdir(repoName);
       await promisedExec('git checkout ' + branch, {}, { forceOutput: true});
-    } else if (fs.existsSync('GSL/.git')) {
-      process.chdir('GSL');
+    } else if (fs.existsSync(repoName + '/.git')) {
+      process.chdir(repoName);
       await promisedExec('git pull', {}, { forceOutput: true});
       await promisedExec('git checkout ' + branch, {}, { forceOutput: true});
     } else {
-      rimraf.sync('GSL');
-      console.log('Removed GSL directory');
-      await promisedExec('git clone ' + repo + ' GSL', {}, { forceOutput: true} );
-      process.chdir('GSL');
+      rimraf.sync(repoName);
+      console.log('Removed Gslc directory');
+      await promisedExec('git clone ' + repo + ' ' + repoName, {}, { forceOutput: true} );
+      process.chdir(repoName);
       await promisedExec('git checkout ' + branch, {}, { forceOutput: true});
     }
   } catch (err) {

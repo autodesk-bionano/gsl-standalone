@@ -14,16 +14,19 @@ echo ""
 
 if [[ ("$OSTYPE" == "linux-gnu") ||  ("$OSTYPE" == "cygwin") ]]; then
 
+    # Seem to require this sequence of steps to install the latest version of mono/fsharp.
     set -x
     sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-    #sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-    #echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
-    #echo "deb http://download.mono-project.com/repo/debian wheezy-libtiff-compat main" | sudo tee -a /etc/apt/sources.list.d/mono-xamarin.list
-
     sudo apt-get update -y
     sudo apt-get install mono-devel -yf
-    sudo apt-get install ca-certificates-mono -yf
     sudo apt-get install mono-complete -yf
+    sudo apt-get install fsharp -yf
+    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+    echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
+    echo "deb http://download.mono-project.com/repo/debian wheezy-libtiff-compat main" | sudo tee -a /etc/apt/sources.list.d/mono-xamarin.list
+    sudo apt-get update -y
+    sudo apt-get upgrade mono-devel -yf
+    sudo apt-get upgrade mono-complete -yf
     sudo apt-get install fsharp -yf
     set +x
 elif [[ "$OSTYPE" == "darwin"* ]]; then
