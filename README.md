@@ -1,3 +1,5 @@
+# This project is not active. The GSL compilier is now run within a Docker Image by CCC.
+
 # gsl-standalone
 
 Standalone GSL server for the Genetic Constructor GSL extension.
